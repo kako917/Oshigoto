@@ -1,0 +1,110 @@
+@charset "UTF-8";
+
+* {
+  　-webkit-box-sizing: border-box;/*border-boxを古いバージョンのブラウザ(Google ChromeとSafari)に対応させる*/
+  　-moz-box-sizing: border-box;/*上記同様(firefox対応)*/
+  　box-sizing: border-box;/*border-box: paddingとborderを幅(width)と高さ(height)に含める*/
+    /*scroll-behavior: smooth;*/
+    margin: 0;
+    padding: 0;
+　}
+
+body {
+  padding: 0;
+  margin: 0;
+  font-family: "TsukuARdGothic-Regular";
+}
+
+.contents{
+  margin: 0;
+  padding: 0;
+}
+
+header {
+    height: 150px;/*100px*/
+    background-color: #2a92bf;
+    /*
+    width: 100%;
+    padding: 15px 0;
+    background-color: #337079;
+    color: white;
+    font-size: 5vw;
+    */
+    margin: 0;
+    padding: 0;
+    opacity: 1;
+  }
+  /*
+  header .headline{
+      line-height:100px;
+      float: left;
+      font-size: 30px;
+      margin-left: 100px;
+      position: relative;
+      bottom: 50px;
+  }
+  */
+
+h1 {
+    text-align: center;
+}
+
+
+
+#authUserName{
+  float: right;
+  position: relative;
+  bottom: 40px;
+  right: 10px;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  font-size: 16px;
+}
+
+#authImage_place{
+  float: right;
+  border-radius: 50%;
+  margin-right: 20px;
+  height: 40px;
+  weight: 40px;
+  position: relative;
+  bottom: 50px;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  font-size: 10px;
+ }
+ p.titleImage{
+   text-align: center;
+   position: relative;
+   top:20px;
+ }
+
+ .pushIn{
+   position: relative;
+   bottom: 40px;
+   left : 30px;
+   color: #000000;
+   display: block;
+   float: left;
+   clear: left;
+  /* margin-bottom: 16px;*/
+   padding: 0px 10px;
+   background: #bfa12a;
+   color: #fff;
+   border-bottom: 2px solid #154464;
+   border-radius: 2px;
+   text-decoration: none;
+   line-height: 40px;
+   font-size: 16px;
+   opacity: 1;
+   font-family:"TsukuARdGothic-Regular";
+   float: left;
+   }
+
+   .pushIn:hover{
+    background: #e6c232;
+   }
+
+ .gochannel{
+    color: #000000;
+ }

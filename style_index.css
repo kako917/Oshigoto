@@ -1,0 +1,1431 @@
+@charset "UTF-8";
+
+/*全ての要素(セレクタに*(アスタリスク)を使うと「全ての要素に対して適用させる」という意味になる 参考: https://saruwakakun.com/html-css/reference/box-sizing)*/
+
+* {
+  　-webkit-box-sizing: border-box;/*border-boxを古いバージョンのブラウザ(Google ChromeとSafari)に対応させる*/
+  　-moz-box-sizing: border-box;/*上記同様(firefox対応)*/
+  　box-sizing: border-box;/*border-box: paddingとborderを幅(width)と高さ(height)に含める*/
+  /*scroll-behavior: smooth;*/
+   margin: 0;
+ 　padding: 0;
+　}
+
+body{
+  margin: 0;
+  padding: 0;
+  font-family: 'Klee One', cursive;
+
+}
+
+.contents{
+  margin: 0;
+  padding: 0;
+}
+
+/*  .contents{
+  overflow: scroll;
+　height: 100vh;
+ border-bottom: 3px solid #ff6347;
+} */
+
+
+
+/*サイドバーではない部分*/
+.container {
+  position: fixed;/*画面の決まった位置に要素を固定させる 参考: https://saruwakakun.com/html-css/basic/relative-absolute-fixed#section6*/
+  z-index: 2;/*要素の重なり順を指定する。数字の大きい方が上に　参考: https://saruwakakun.com/html-css/basic/z-index*/
+  width: 100%;
+  min-height: 100%;/*高さの最小値を指定する　参考: https://html-coding.co.jp/annex/dictionary/css/min-height/*/
+  /*padding: 30px 50px;*//*要素の内側の余白。padding: 上下　左右。参考: http://www.htmq.com/style/padding.shtml https://saruwakakun.com/html-css/basic/margin-padding*/
+  -webkit-transition: -webkit-transform 0.5s; /*参考にしたサイトには書かれていたが、非推奨になったようだ。参考: https://developer.mozilla.org/ja/docs/Web/CSS/@media/-webkit-transition#browser_compatibility*/
+  /*-webkit-backface-visibility: hidden; 3D空間で変形した要素の背面の表示方法を指定するが、今回は必要ないので削除。参考: https://dekiru.net/article/13256/*/
+  overflow: scroll; /* ここのscrollが効かない */
+  height: 100vh;
+  /*overflow - y:scroll;;/*スクロール機能　https://techacademy.jp/magazine/30983*/
+  /*background-attachment: fixed;*/
+  background-image: url();
+  background-color:rgba(255,255,255,0.8);
+  background-blend-mode:lighten;
+  /*background-position: center center;*/
+
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  /*position: relative;*/
+
+  height: 100vh;
+  /*width: 100%;*/
+
+  /*backdrop-filter: blur(12px);*/
+  /*weight: 100 / 2vh;*/
+  margin:0;
+  padding:0;
+}
+
+/*
+.container::before {
+  background: inherit;
+  content: '';
+  filter: blur(5px);
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  bottom: -5px;
+  left: -5px;
+}
+*/
+
+.containerOverlay {
+  display:none;/*要素を非表示にする　参考: https://techacademy.jp/magazine/29917*/
+  background: rgba(0,0,0,.3);
+}
+
+.containerOverlay,.containerOverlay a {/*containerOverlay aはcontainerOverlayの中にあるaタグのcssを指定するということ 参考: https://web-manabu.com/html-css24/*/
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+
+/* Type and Buttons(push in from left)*/
+/*  h1 {
+  font-weight: 300;
+} */
+
+/*メニューバー*/
+/* Nav (ウェブサイト内の他のページへのリンクや、ページ内リンクなどナビゲーションであることを示す 参考: http://www.htmq.com/html5/nav.shtml)*/
+nav {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  -webkit-transform: translate3d(-100%, 0, 0); /*要素を3D空間で再配置する。今回だと、x軸方向に-100%移動するということ 参考: https://developer.mozilla.org/ja/docs/Web/CSS/transform-function/translate3d()*/
+  -webkit-transition: -webkit-transform 0.5s;
+  /*-webkit-backface-visibility: hidden;*/
+  /*-webkit-perspective: 1000; 遠近感を与えるが、今回は必要ないので削除。参考: https://qiita.com/junya/items/a456e14da4bb2b11806f*/
+  width: 19%;
+  background: #2a92bf;
+}
+
+nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;;/*リスト先頭のマーカーなし 参考: http://www.htmq.com/style/list-style-type.shtml*/
+}
+
+nav li {
+  display: block;
+  padding: 5px 10px;
+  border-bottom: 1px solid #ffffff;
+}
+
+.menuTitle{
+  font-size: 16px;
+   color: #ffffff;
+}
+
+.menuName{
+  color:#ffffff;
+}
+nav:target {/*クリックした時のcssを設定する方法 */
+  z-index: 3;
+  -webkit-transform: translate3d(0, 0, 0);
+}
+nav:target ~ .container .containerOverlay {/*navタグの中で、targetよりも後に出てくるcontainerやcontainerOverlayに適用される 参考: https://developer.mozilla.org/ja/docs/Web/CSS/General_sibling_combinator*/
+  display: block;
+}
+
+/* Push left */
+#pushLeft:target ~ .container {/*idセレクタでは#を付ける 参考: https://www.tagindex.com/stylesheet/basic/format3.html*/
+  -webkit-transform: translate3d(20%, 0, 0);
+}
+
+.menu {
+  background-color: #bfa12a;
+  color: #fff;
+  position: absolute;/*絶対配置　参考: https://www.sejuku.net/blog/53016*/
+  height: 100%;
+  width: 45px;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: width 0.1s ease-in;
+  transition-delay: 0.3s;
+}
+
+.menu-item .fa {
+  font-size: 16px;
+  width: 45px;
+  text-align: center;
+}
+
+.menu-item a{
+  color: #ffffff;
+}
+
+.channelColor a{
+  color: #ffffff;
+}
+
+.menu-item {
+  line-height: 35px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.menu-item:hover {
+  background: #06a3bf;
+}
+
+.menu:hover {
+  width: 200px;
+}
+
+.channelColor{
+  background: #bfa12a;
+}
+
+
+.work-section .tabs-nav {
+    border-left: 1px solid rgb(218, 218, 218);
+    float: right;
+    letter-spacing: 1px;
+    -webkit-box-shadow: inset 1px 0 rgb(255, 255, 255);
+            box-shadow: inset 1px 0 rgb(255, 255, 255);
+}
+
+.work-section .tabs-nav li {
+    border-right: 1px solid rgb(218, 218, 218);
+    float: left;
+    list-style: none;
+    position: relative;
+    -webkit-box-shadow: 1px 0 rgb(255, 255, 255);
+            box-shadow: 1px 0 rgb(255, 255, 255);
+}
+.work-section .tabs-nav a {
+    display: block;
+    padding: 0 1.36em;
+    position: relative;
+}
+.work-section .tabs-nav a:hover,
+.work-section .tabs-nav a.active {
+    background-color: rgb(51, 51, 51);
+    color: rgb(255, 255, 255);
+}
+.work-section .tabs-nav a.active:after {
+    background: url(../img/sprites.png) no-repeat 0 0;
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 37px;
+    height: 19px;
+    margin-left: -18px;
+}
+
+
+/*2カラム(ストップウオッチ、タイマー) 参考: https://webukatu.com/wordpress/blog/32340/#1*/
+/*
+.stopwatch,.timer2{
+   width: 50%;
+   height: 100px;
+}
+*/
+
+/*2カラム(カレンダー, todoリスト)*/
+/*.contentA{
+    margin-bottom: 30px;
+}*/
+
+/*.contentA,.contentB{*//*contentC*/
+  /*width: 50%;*/
+  /*position: relative;*/
+  /*top: 50px;*/
+  /*right: 200px;*/
+/*}*/
+
+/*
+.contentA{
+  position: relative;
+  right: 200px;
+}
+
+.contentB{
+  width: 200%;
+  position: relative;
+  left:  150px;
+}
+.contentC{
+  position: relative;
+  left: 200px;
+}
+*/
+/*.main{
+ display: flex;
+}*/
+
+/*ストップウォッチ*/
+/*
+.stopwatch{
+  margin-left:  100px;
+}
+*/
+
+/*jKanban*/
+
+/*リンク関連*/
+a {
+    color: #ffffff;/*訪問前の色*/
+    text-decoration: none;/*下線なし*/
+}
+
+/*a:visited{*/
+    /*color: #333333;*//*訪問後の色*/
+    /*text-decoration: none;
+}*/
+
+a:hover {
+    color: #ffffff;/*マウスポインタを置いた時の色*/
+}
+
+
+li a{display:block;}
+
+/*写真のサイズ*/
+/*img {
+ max-width: 40%;
+ height: auto;
+}*/
+
+header {
+  height: 150px;
+  background-color: #2a92bf;
+  margin: 0;
+  padding: 0;
+  opacity: 1;
+}
+/*  header .headline{
+    line-height: 100px;
+    float: left;
+    font-size: 30px;
+    margin-left: 100px;
+    position: relative;
+    bottom: 50px;
+} */
+
+.tab_container {
+  padding: 0;
+  margin: 0;
+  /*background-color: #fff;*/
+  /*border:1px solid #37beb0;*/
+  margin: 0 auto;
+  border-collapse: collapse;
+}
+.tab_item {
+  width: calc(100%/4);    /*100%/4を100%/3に変更*/
+  /*width: 100;*/
+  padding:15px 0;
+  border: 3px solid #bf2a48 ;
+  background-color: ;
+  text-align: center;
+  color: #bf2a48 ;
+  display: block;
+  float: left;
+  text-align: center;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  position: relative;
+  border: none;
+  top: 10px;
+  left: 180px;
+  font-size: 30px
+}
+
+.tab_item:hover {
+  opacity: 0.75;
+}
+input[name="tab_item"] {
+  display: none;
+}
+.tab_content {
+  display: none;
+  padding: 1em 1em 0;
+  clear: both;
+  overflow: hidden;
+}
+#tab1:checked ~ #tab1_content,
+#tab2:checked ~ #tab2_content,
+#tab3:checked ~ #tab3_content {  /*, #tab4:checked ~ #tab4_contentを削除*/
+  display: block;
+}
+.tab_container input:checked + .tab_item {
+  background-color: rgba(42, 146, 191, 0.5);/*R:191 G:42 B:72*/
+  color: #fff;
+  /*opacity: 0.75;*/
+}
+
+/*設定*/
+.container1 {
+  display: flex;
+  /*flex-direction: column;*/
+  position: relative;
+  top: 10px;
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+.container2 {
+  display: flex;
+  /*flex-direction: column;*/
+  position: relative;
+  top: 10px;
+}
+
+.form-title{
+  position: relative;
+  /*bottom: 100px;*/
+}
+
+.submitbutton button{
+  position: relative;
+  left: 170px;
+  bottom :5px;
+  color: #000000;
+  /*display: block;
+  float: left;
+  clear: left;*/
+ /* margin-bottom: 16px;*/
+  /*padding: 0px 10px;*/
+  background: #2a92bf;
+color: #fff;
+  border-bottom: 2px solid #154464;
+  border-radius: 2px;
+  text-decoration: none;
+  line-height: 40px;
+  font-size: 16px;
+  opacity: 1;
+}
+
+.submitbutton:hover{
+}
+
+
+.submitbutton2 button{
+  position: relative;
+  left: 330px;
+  bottom: 80px;
+
+  background: #2a92bf;
+  color: #fff;
+  border-bottom: 2px solid #154464;
+  border-radius: 2px;
+  text-decoration: none;
+  line-height: 40px;
+  font-size: 16px;
+  opacity: 1;
+  margin: 0px;
+}
+
+.submitbutton2 input{
+  position: relative;
+  left: 15px;
+  margin: 0px;
+}
+
+
+
+.submitbutton3 input{
+  position: relative;
+  left: 10px;
+  /*bottom: 80px;*/
+
+  /* 背景色(任意の色を指定) */
+  background-color: #eee;
+
+  /* inputの枠線を消す */
+  border: 1px solid transparent;
+  transition: border 0.2s ease-out;
+
+  /* 文字色を親から継承 */
+  /*color: inherit;*/
+
+  /* 任意の高さ */
+  height: 30px;
+
+  /*inputのフォーカス時の枠線を消す*/
+  outline: 0;
+}
+
+.submitbutton2, .submitbutton3, .container2{
+  margin: 0px;
+
+}
+
+
+.submitbutton3 button{
+  position: relative;
+  left: 250px;
+  bottom: 75px;
+
+  background: #2a92bf;
+  color: #fff;
+  border-bottom: 2px solid #154464;
+  border-radius: 2px;
+  text-decoration: none;
+  line-height: 40px;
+  font-size: 16px;
+  opacity: 1;
+}
+.container6{
+  display: flex;
+  /*flex-direction: column;*/
+  position: relative;
+  top: 10px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.boxColor1{
+  /* 背景色(任意の色を指定) */
+  background-color: #eee;
+
+  /* inputの枠線を消す */
+  border: 1px solid transparent;
+  transition: border 0.2s ease-out;
+
+  /* 文字色を親から継承 */
+  /*color: inherit;*/
+
+  /* 任意の高さ */
+  height: 30px;
+
+  /*inputのフォーカス時の枠線を消す*/
+  outline: 0;
+}
+
+.container3 button, p{
+  position: relative;
+  top: 8px;
+}
+
+.uploadsintyoku{
+  position: relative;
+  top: 50px;
+  right: 110px;
+}
+
+#uploader1{
+  position: relative;
+  right: 110px;
+}
+
+.kakunin{
+  position: relative;
+  top: 70px;
+  right: 50px;
+}
+
+.container3 button{
+  background: #2A92BF;
+  color: #fff;
+  border-bottom: 2px solid #154464;
+  border-radius: 2px;
+  text-decoration: none;
+  line-height: 40px;
+  font-size: 16px;
+  opacity: 1;
+}
+
+.container4 button{
+  background: #2A92BF;
+  color: #fff;
+  border-bottom: 2px solid #154464;
+  border-radius: 2px;
+  text-decoration: none;
+  line-height: 40px;
+  font-size: 16px;
+  opacity: 1;
+}
+
+.container3{
+  position: relative;
+  top: 10px;
+  margin: 0px 0px 50px 0px;
+}
+
+.container3 img{
+  position: relative;
+  top: 25px;
+}
+
+.container4 button, p{
+  position: relative;
+  top: 8px;
+  margin: 0px 0px 50px 0px;
+}
+
+.container4{
+  position: relative;
+  top: 10px;
+}
+
+.container4 img{
+  position: relative;
+  top: 25px;
+}
+
+
+.yokoBlock{
+  float; right;
+}
+
+/* ヘッダー　*/
+/*.titleName{
+  text-align: center;
+  font-size: 30px;
+  letter-spacing: 20px;
+  position: relative;
+  top: 20px
+}*/
+/*.title{
+  text-align: center;
+}*/
+button {/*ここを変えればpush in from leftボタンがいい感じの場所に動く？*/
+  display: block;
+  float: left;
+  clear: left;
+  background: #fff;
+  color: #1c6280;
+  border-bottom: 2px solid #154464;
+  border-radius: 2px;
+  text-decoration: none;
+  line-height: 40px;
+  margin: 0;
+  padding: 0px 10px;
+  border: none;
+  font-size: 30px;
+}
+
+
+p.titleImage{
+  text-align: center;
+  position: relative;
+  top:20px;
+}
+
+
+#authUserName{
+  float: right;
+  position: relative;
+  bottom: 50px;
+  right: 10px;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  font-size: 16px;
+}
+
+#authImage_place{
+  float: right;
+  border-radius: 50%;
+  margin-right: 20px;
+  height: 40px;
+  weight: 40px;
+  position: relative;
+  bottom: 60px;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  font-size: 10px;
+ }
+
+ .button{
+   padding: 8px 24px;
+   color: white;
+   display: inline-block;
+   border-radius: 4px;
+   margin:0;
+ }
+
+
+ .pushIn{
+   position: relative;
+   bottom: 80px;
+   left : 50px;
+   color: #000000;
+   display: block;
+   float: left;
+   clear: left;
+  /* margin-bottom: 16px;*/
+   padding: 0px 10px;
+   background: #bfa12a;
+   color: #fff;
+   border-bottom: 2px solid #154464;
+   border-radius: 2px;
+   text-decoration: none;
+   line-height: 40px;
+   font-size: 16px;
+   opacity: 1;
+   }
+
+   .pushIn:hover{
+    background: #e6c232;
+   }
+
+ .gochannel{
+    color: #000000;
+ }
+
+ .logout{
+   float: right;
+   padding: 0px 12px;
+   position: relative;
+   margin: 0;
+   bottom: 150px;
+   right: 20px;
+   background-color: #bfa12a;
+   border-bottom: 2px solid #154464;
+   font-size:14px;
+ }
+
+ .logout:hover{
+  background: #e6c232;
+ }
+
+ .channelplus{
+   padding: 0px 12px;
+   font-size: 16px;
+   position: relative;
+   top: 60px;
+   border: none;
+ }
+
+ .addchannel{
+   float: right;
+   padding: 0px 15px;
+   font-size: 16px;
+   position:relative;
+   top: 12px;
+   right: 150px;
+ }
+
+
+ .wrapperbottom{ /*カレンダーとトレロ*/
+   width: 80%;
+   display: flex;
+   margin: 20px auto;
+ }
+
+
+ .calender{
+   position: relative;
+   top: 20px;
+   right: 60px;
+   /* "HanziPen SC";*//*"Hannotate SC"*/
+   font-size: 25px;
+   padding: 0.5em 1em;
+    margin: 1em 0;
+    background: #f4f4f4;
+    opacity: 0.8;
+    border-left: solid 6px #2a92bf;
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.33);
+    opacity: 0.8;
+    width: 150px;
+ }
+
+ #id_ifrem1{
+  /* border:solid 2px #777*/
+  position: relative;
+  right: 80px;
+  width: 70vh;
+  margin: 20px;
+ }
+
+.contentB{
+  position: relative;
+  top: 20px;
+  left: 50px;
+}
+
+.todolist{
+  font-size: 25px;
+  padding: 0.5em 1em;
+   margin: 1em 0;
+   background: #f4f4f4;
+   opacity: 0.8;
+   border-left: solid 6px #2a92bf;
+   box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.33);
+   position:relative;
+   left: 0px;
+   opacity: 0.8;
+   width:200px;
+}
+
+
+ /*.contentA{*/
+   /*float: left;*/
+   /*position: relative;
+   top: 100px;
+ }*/
+
+ /*jKanban*/
+ .task {
+   background-color: #2A92BF;/*#F4CE46*/
+   color:white;
+   font-size: 50px;
+ }
+ .progress {
+   background-color: #BF2A48;/*#2A92BF*/
+   color:white;
+   font-size: 50px;
+ }
+ .done {
+   background-color: #BFA12A;/*#00B961*/
+   color:white;
+   font-size: 50px;
+ }
+
+ .wrapper { /*タイマーとストップウォッチ　*/
+    width: 90%;
+    display: flex;
+    margin: 20px auto;
+    /*justify-content: center;*/
+   padding: 0.5em 1em;
+   margin: 2em 0;
+   color: #000000;
+   background: transparent;
+   border-right: solid 5px #bf2a48 ;
+   border-left: solid 5px #bf2a48 ;
+   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+   position: relative;
+   left: 50px
+}
+
+.stopwatch{
+  position: relative;
+  left: 150px;
+  top: 20px;
+}
+
+.stoptimer{
+   height: 10vh;
+   font-size: 50px;
+}
+
+.timersection{ /*タイマー*/
+  position: relative;
+  top: 20px;
+  left:100px
+}
+
+input.timerms{
+  margin-top: 25px;
+  height: 30px;
+  border: 2px solid #000;
+}
+
+h1.namestop{
+  font-size: 20px;
+  padding: 0.5em 1em;
+   margin: 1em 0;
+   background: #f4f4f4;
+   opacity: 0.8;
+   border-left: solid 6px #2a92bf;
+   box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.33);
+   position:relative;
+   left: 0px;
+   opacity: 0.8;
+   width: 200px;
+}
+
+.stopbotton{
+  position: relative;
+  bottom: 2px;
+}
+.stop{
+  float: right;
+  position: relative;
+  bottom: 42px;
+  right: 100px;
+}
+
+.reset{
+  float: right;
+  position: relative;
+  bottom: 42px;
+  left: 50px;
+}
+
+.start{
+position: relative;
+bottom:2px;
+}
+
+.watch{
+  padding: 0px 10px;
+  background-color: #bfa12a;
+  border-bottom: 2px solid #154464;
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: #fff;
+  height: 40px;
+  padding-bottom: 10px;
+}
+
+.watch:hover{
+  background: #e6c232;
+}
+
+.timersection{
+  position: relative;
+  left: 500px;
+
+}
+
+.nametimer{
+    font-size: 20px;
+    padding: 0.5em 1em;
+     margin: 1em 0;
+     background: #f4f4f4;
+     opacity: 0.8;
+     border-left: solid 6px #2a92bf;
+     box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.33);
+     position:relative;
+     left: 0px;
+     opacity: 0.8;
+     width: 100px;
+}
+
+input.timekeeper{
+  padding: 10px 10px;
+  background-color: #bfa12a;
+  border: none;
+  border-bottom: 2px solid #154464;
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: #ffffff;
+}
+
+input.timekeeper:hover{
+  background: #e6c232;
+}
+
+
+input.tStart{
+  position: relative;
+  top: 15px;
+}
+input.tStop{
+  position: relative;
+  top: 15px;
+  left: 30px;
+}
+/*タブ1枚目ここまで*/
+
+/*タブ2枚目*/
+.oshishow{
+   padding-top: 150px;
+   padding-bottom: 300px;
+}
+
+p.showtitle{
+  width: 60vh;
+  font-size:30px;
+  text-align: center;
+  padding-top: 50px;
+  padding-bottom: 150px;
+  padding: 0.5em 1em;
+   margin: 1em 0;
+   background: #f4f4f4;
+   opacity: 0.8;
+   border-left: solid 6px #2a92bf;
+   box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.33);
+   position:relative;
+   left: 50px
+   bottom:50px;
+}
+
+.showup{
+  position:relative;
+  bottom: 100px
+}
+span.oshigoto{
+  color: #bf2a48;
+}
+
+.slider{
+  padding-top: 100px;
+}
+
+/*.undershow{
+border-width: 1px 0 0 0;
+border-style: dashed;
+border-color: #2a92bf;
+}*/
+
+.undershow {
+  height: 5px;
+  position: relative;
+}
+.undershow::before {
+  content: "";
+  background-image: linear-gradient(to right, #2A92BF, #2A92BF, 15px, transparent 15px, transparent 15px);
+  background-size: 30px 4px;
+  background-repeat: repeat-x;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+/*イベント追加*/
+
+#event{
+  margin-bottom: 50px;
+}
+
+.eventmei{
+  font-size: 25px;
+  position: relative;
+  left: 100px;
+  color: #bf2a48
+}
+
+#eventName{
+   position: relative;
+   left: 250px;
+   bottom: 80px;
+   height: 30px;
+   width: 200px;
+}
+
+.eventday{
+  font-size: 25px;
+  position: relative;
+  left: 500px;
+  bottom: 165px;
+  color: #bf2a48
+}
+
+#eventDate{
+  height: 30px;
+  width: 200px;
+  position: relative;
+  left: 590px;
+  bottom: 202px;
+}
+
+.soushin{
+  font-size: 20px;
+  position: relative;
+  left: 850px;
+  bottom: 290px;
+  padding: 0px 10px;
+  background-color: #bfa12a;
+  border-bottom: 2px solid #154464;
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: #fff;
+  opacity: 0.7;
+
+}
+
+.soushin:hover{
+  background: #e6c232;
+}
+
+p#oshi{
+  font-size: 30px;
+}
+
+.oshitekara{
+  position:relative;
+  bottom: 180px;
+  left:100px;
+  /*margin: 2em 0 2em 40px;
+ padding: 8px 15px;
+ background: #fff0c6;
+ border-radius: 30px;*/
+ /*padding: 0.5em 0.7em;
+ margin: 2em 0;
+ background: transparent;
+ border: 1px solid #bf2a48;
+ color: #5c98d4;
+ font-weight: bold;*/
+ padding: 0.5em 1em;
+  margin: 1em 0;
+  background: #f4f4f4;
+  opacity: 0.8;
+  border-left: solid 6px #bf2a48;
+  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.33);
+  width:50vh;
+  height: 110px;
+}
+
+/*.oshitekara:before,.oshitekara:after{
+    content: '';
+    position: absolute;
+    width:10px;
+    height: 10px;
+    border: solid 2px #ffcb8a;
+    border-radius: 50%;
+}*/
+/*.oshitekara:after {*/
+    /*top:-12px;
+    left:-12px;*/
+    /*content: "\f111";
+   position: absolute;
+   font-size: 23px;
+   left: -23px;
+   bottom: 0;
+   color: #fff0c6;*/
+   /*position: absolute;
+   content: '';
+   top: 100%;
+   left: 30px;
+   border: 15px solid #bf2a48;
+   border-top: 15px solid #e6f4ff;
+   width: 0;
+   height: 30px;
+}*/
+/*.oshitekara:before {*/
+    /*bottom:-12px;
+    right:-12px;*/
+  /*  content: "\f111";
+   position: absolute;
+   font-size: 15px;
+   left: -40px;
+   bottom: 0;
+   color: #fff0c6;*/
+/*}*/
+
+ul#event{
+  font-size: 30px;
+  position: relative;
+  left: 100px;
+  bottom: 200px;
+  margin: 0;
+  margin: 10px;
+  padding: 10px 10px;
+  list-style: none;
+  width: 150vh;
+  padding: 0.2em 0.5em;
+  margin: 2em 0;
+  color: #000;/*#565656;*/
+  background:  #8AB8BF;
+  opacity: 0.8;
+  box-shadow: 0px 0px 0px 10px #8AB8BF;
+  border: dashed 2px #BF2A48;
+  border-radius: 8px;
+}
+
+/*li{
+  margin: 20;
+}*/
+
+/*li.eventlist{
+margin: 10px;
+padding: 0.2em 0.5em;
+margin: 2em 0;
+color: #565656;
+background: #ffeaea;
+box-shadow: 0px 0px 0px 10px #ffeaea;
+border: dashed 2px #ffc3c3;
+border-radius: 8px;
+}*/
+
+
+
+/*モダル*/
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 23% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/*==================================================
+スライダーのためのcss
+===================================*/
+.slider img {
+    width:200px;/*スライダー内の画像を横幅100%に*/
+    height:200px;
+}
+
+/*slickのJSで書かれるタグ内、スライド左右の余白調整*/
+
+.slider .slick-slide {
+    margin:0 10px;/*スライド左右の余白調整*/
+}
+
+/*===============
+イベントまで〇〇日
+=============*/
+.eventbox {
+  position: relative;
+  left:100px;
+}
+
+.oshitekaraDate{
+  /*float: left;*/
+  display: flex;
+}
+
+.yokonarabi{
+  display: flex;
+}
+
+
+/*=========
+フォーム
+=======*/
+/*input */
+.boxColor{
+  /* 背景色(任意の色を指定) */
+  background-color: #eee;
+
+  /* inputの枠線を消す */
+  border: 1px solid transparent;
+  transition: border 0.2s ease-out;
+
+  /* 文字色を親から継承 */
+  /*color: inherit;*/
+
+  /* 任意の高さ */
+  height: 30px;
+
+  /*inputのフォーカス時の枠線を消す*/
+  outline: 0;
+}
+
+/* inputにフォーカスが当たっている時 */
+input:focus {
+  border-bottom: 1px solid#bf2a48;
+}
+
+.settei h5{
+  font-weight: normal;
+  position: relative;
+  top: 10px;
+}
+
+.settei{
+  position: relative;
+  top: 10px;
+}
+
+.settei h2{
+  width: 80px;
+  /*border-bottom: 6px double #000;
+  color: #bf2a48;*/
+  padding: 0.5em 1em;
+  /*margin: 1em 0;*/
+   background: #f4f4f4;
+   opacity: 0.8;
+   border-left: solid 6px #2a92bf;
+   box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.33);
+}
+
+.settei h3{
+  position: relative;
+  top: 10px;
+}
+
+.settei a{
+  color: #bfa12a;
+}
+
+.settei a:hover{
+  color: #bf2a48;
+}
+
+.tate{
+  position: relative;
+  buttom: 30px;
+}
+
+.disN, .disN1{
+  display: none;
+}
+.disB, .disB1{
+  display: block;
+}
+
+
+#myKanban2{
+  position: relative;
+  top: 50px;
+  margin: 0px 0px 100px 0px;
+}
+
+/*===========
+編集ここから
+=========*/
+.container1 input{
+  position: relative;
+  right: 50px;
+}
+
+.container6 input{
+  position: relative;
+  left: 50px;
+}
+
+/*===========
+編集ここから
+=========*/
+#myKanban1{
+  position: relative;
+  top: 50px;
+  margin: 0px 0px 10px 0px;
+}
+
+#message1{
+  position: relative;
+  top: 20px;
+
+  margin: 0px, 0px, 0px, 0px;
+}
+/*=======
+タブの位置
+======*/
+.tab_item1{
+  position: relative;
+  right: 250px;
+}
+
+.icon_place{
+  position: relative;
+  top: 30px;
+}
+
+.balloon5 {
+  width: 100%;
+  margin: 1.5em 0;
+  overflow: hidden;
+}
+
+.balloon5 .faceicon {
+  float: left;
+  margin-right: -90px;
+  width: 80px;
+}
+
+.balloon5 .faceicon img{
+  width: 100%;
+  height: auto;
+  /*border: solid 3px #d7ebfe;
+  border-radius: 50%;*/
+}
+
+.balloon5 .chatting {
+  width: 100%;
+}
+
+.says {
+  display: inline-block;
+  position: relative;
+  margin: 5px 0 0 105px;
+  padding: 17px 13px;
+  /*border-radius: 12px;
+  background: #d7ebfe;*/
+}
+
+.says:after {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  top: 18px;
+  left: -24px;
+  /*border: 12px solid transparent;
+  border-right: 12px solid #d7ebfe;*/
+}
+
+.says ol {
+  margin: 0;
+  padding: 0;
+}
+
+/*メッセージ表示ver*/
+.balloon5_see{
+  width: 100%;
+  margin: 1.5em 0;
+  overflow: hidden;
+}
+
+.balloon5_see .faceicon_see {
+  float: left;
+  margin-right: -90px;
+  width: 200px;
+}
+
+.balloon5_see .faceicon_see img{
+  width: 100%;
+  height: auto;
+  border: solid 3px #d7ebfe;
+  border-radius: 50%;
+  /*position: relative;
+  top: 50px;*/
+}
+
+.balloon5_see .chatting {
+  width: 100%;
+}
+
+.says_see {
+  display: inline-block;
+  position: relative;
+  margin: 5px 0 0 105px;
+  padding: 17px 13px;
+  border-radius: 12px;
+  background: #d7ebfe;
+  position: relative;
+  /*top: 0px;*/
+}
+
+.says_see:after {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  top: 18px;
+  left: -24px;
+  border: 12px solid transparent;
+  border-right: 12px solid #d7ebfe;
+  /*position: relative;
+  top: 50px;*/
+}
+
+.says_see ol{
+  margin: 0;
+  padding: 0;
+}

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <title>設定</title>
+    <style>
+      html,body {
+        height: 100%;
+        margin: 0;
+      }
+      .container {
+        display: flex;
+        /*
+        justify-content: center;
+        align-items: center;
+        */
+        flex-direction: column;
+        /*height: 100%;*/
+        position: relative;
+        left: 20px;
+        /*bottom: 20px;*/
+      }
+      /*
+      .container2 {
+        display: flex;
+
+        justify-content: center;
+        align-items: center;
+
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+        left: 100px;
+        bottom: 20px;
+      }
+      */
+      .disN, .disN1{
+        display: none;
+      }
+      .disB, .disB1{
+        display: block;
+      }
+
+      img {
+        height: 300px;
+        width: auto;
+      }
+
+      box{
+        float: left;
+      }
+
+      /*リンク関連*/
+      a {
+          color: #0000ff;;/*訪問前の色*/
+          text-decoration: none;/*下線なし*/
+      }
+
+      a:visited{
+          color: #000080;/*訪問後の色*/
+          text-decoration: none;
+      }
+
+      a:hover {
+          color: #ff0000;/*マウスポインタを置いた時の色*/
+      }
+      /*
+      hid{
+        visibility:hidden;
+      }
+      */
+    </style>
+  </head>
+  <body>
+    <h1>設定画面</h1>
+    <p id =  "messageforuser">wait...</p>
+    <div id = "set"><!--div id = "set" hidden-->
+      <h3>推し（趣味）の画像保存</h3><!--※ファイル名idol数字.png(数字は4~9のいずれか、firebase storageのimageフォルダを見て重ならないように設定してもらえると嬉しいです！)-->
+      <div class="container">
+        <progress value = "0" max = "100" id = "uploader"　class = "box">0%</progress>
+        <p id = "showPercentage"　class = "box"></p>
+        <div><input type="file" name="" id="fileButton" /></div>
+        <div>
+          <button id="up">アップロード</button>
+          <button id="down" class="disN">ダウンロード</button>
+        </div>
+        <div>
+          <p>
+            ダウンロードボタンをクリックした後、数秒後に画像が表示されます。
+          </p>
+          <img id="image_place" src="" alt="" />
+          <textarea id="doc" cols="40" rows="5"></textarea>
+        </div>
+      </div>
+
+      <h3>背景設定</h3>
+      <p>600px * 300px以上の画像を使用することをおすすめします！</p><!--background.png-->
+      <div class="container">
+        <progress value = "0" max = "100" id = "uploader1"　class = "box">0%</progress>
+        <p id = "showPercentage1"　class = "box"></p>
+        <div><input type="file" name="" id="fileButton1" /></div>
+        <div>
+          <button id="up1">アップロード</button>
+          <button id="down1" class="disN1">ダウンロード</button>
+        </div>
+        <div>
+          <p>
+            ダウンロードボタンをクリックした後、数秒後に画像が表示されます。
+          </p>
+          <img id="image_place1" src="" alt="" />
+          <textarea id="doc1" cols="40" rows="5"></textarea>
+        </div>
+      </div>
+
+      <!--h3>GoogleカレンダーURL</h3>
+      <form method = "post">
+        <p><label>URL: <input type="url" id = "calenderUrl"></label></p>
+        <button id="fileButton">送信する</button>
+      </form>
+      <div>
+        <h4>【GoogleカレンダーURLを取得する方法】</h4>
+        パソコンで<a href="https://calendar.google.com/">Googleカレンダー</a>を開きます。<説明加える>
+      </div-->
+    </div>
+
+        <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="/__/firebase/8.8.1/firebase-auth.js"></script>
+    <script src="/__/firebase/8.8.1/firebase-storage.js"></script>
+    <script src="/__/firebase/8.8.1/firebase-database.js"></script>
+    <script>
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      var firebaseConfig = {
+        apiKey: "AIzaSyDSaaLw5QkkNBQL4Ylt6MQHCev_rVIPdSs",
+        authDomain: "openhacku.firebaseapp.com",
+        databaseURL: "https://openhacku-default-rtdb.firebaseio.com",
+        projectId: "openhacku",
+        storageBucket: "openhacku.appspot.com",
+        messagingSenderId: "883797853839",
+        appId: "1:883797853839:web:dace63e0f0f68559a652fa",
+        measurementId: "G-S4YHHLM4E3"
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      //ユーザー情報
+      var uid = "";
+      var displayName = "";
+      var email = "";
+      var photoURL = "";
+      var emailVerified = "";
+
+      //データベース関連
+      var database = firebase.database();
+
+      //認証
+      //ユーザー情報を取得&カレンダーurlとタスクをデータベースから持ってきて表示
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          document.querySelector("#messageforuser").innerHTML = "画像の保存や背景、GoogleカレンダーURLの設定が行えます。";
+          //document.getElementById('set').hidden = false;
+          // User is signed in, see docs for a list of available properties
+          // https://firebase.google.com/docs/reference/js/firebase.User
+
+          uid = user.uid;
+          displayName = user.displayName;
+          email = user.email;
+          photoURL = user.photoURL;
+          emailVerified = user.emailVerified;
+
+          /*
+          console.log("displayName: " + displayName);//名前
+          console.log("email: " + email);//email
+          console.log("photoURL: " + photoURL);//ユーザー写真のurl
+          console.log("emailVerified " + emailVerified);
+          console.log("uid:" + uid);
+          */
+
+          //カレンダーurlをデータベースに追加
+          /*
+          function doAction(){
+              let tl = document.querySelector('#calenderUrl');
+              console.log(tl.value);
+              let userID = uid;
+              console.log(userID);
+              let val = {
+                  'url':tl.value,
+                  'userID': userID
+              };
+              var people = database.ref("calendarURL").push();
+              people.set(val);
+              tl.value = '';
+              //window.location.href = "_index.html";
+          }
+          */
+        } else {
+          // User is signed out
+          console.log("null");
+          //document.getElementById("set").style.;
+          document.querySelector("#messageforuser").innerHTML = "認証されていないため、画像のアップロード及び表示が出来ません。ログインしてからもう一度お試しください。";
+          // ...
+        }
+      });
+
+      /**推しの画像保存**/
+      //Get elements
+      var uploader = document.getElementById("uploader");
+      const up = document.getElementById("up");
+      //const sendBottom = document.getElementById("sendBottom");
+
+      //アップロード
+      up.addEventListener("click", () => {
+        ////アップロードボタンが押されたら、inputタグからファイルの取得
+        const file = document.getElementById("fileButton").files[0];
+        //ファイルの参照(画像保存場所のファイルパスを作る)
+        var storageRef = firebase.storage().ref();
+
+        //ファイルのメタデータ
+        var metadata = {
+          contentType: "image/*",
+          customMetadata: {
+            "userID": uid
+          }
+        };
+        //画像ファイルのアップロード
+        const uploadTask = storageRef.child("image/" + file.name).put(file, metadata);
+        //console.log(uploadTask);
+
+        var flg = 0;
+        uploadTask.on(
+          "state_changed",
+          function (snapshot) {
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log("Upload is " + progress + "% done");
+            uploader.value = progress;
+            document.querySelector("#showPercentage").innerHTML = progress + "%";
+            switch (snapshot.state) {
+              case firebase.storage.TaskState.PAUSED: // or 'paused'
+                console.log("Upload is paused");
+                break;
+              case firebase.storage.TaskState.RUNNING: // or 'running'
+                console.log("Upload is running");
+                break;
+            }
+            if (progress === 100 && flg === 0) {
+              console.log("100%です。");
+              var display = document.querySelector(".disN");
+              display.classList.replace("disN", "disB");
+              flg = 1;
+              //progress=0;
+            }
+          },
+          function (error) {
+            switch (error.code) {
+              case "storage/unauthorized":
+                // User doesn't have permission to access the object
+                console.log(
+                  "目的の操作を行う権限がユーザーにありません。セキュリティ ルールが正しいことをご確認ください。"
+                );
+                break;
+
+              case "storage/canceled":
+                // User canceled the upload
+                console.log("ユーザーがオペレーションをキャンセルしました。");
+                break;
+
+              case "storage/unknown":
+                // Unknown error occurred, inspect error.serverResponse
+                console.log("不明なエラーが発生しました。");
+                break;
+              default:
+                console.log("error");
+                break;
+            }
+          }
+        );
+      });
+
+      //ダウンロード
+      const down = document.getElementById("down");
+      down.addEventListener("click", () => {
+        //ファイルの取得
+        const file = document.getElementById("fileButton").files[0];
+        //ファイルの参照
+        var storageRef = firebase.storage().ref();
+        const DownloadTask = storageRef.child("image/" + file.name);
+
+        DownloadTask.getMetadata().then((metadata)=> {
+          //let msg = document.querySelector('#doc');
+          //msg.textContent = JSON.stringify(metadata, null, "    ");
+        });
+
+        //画像ファイルのダウンロード
+        DownloadTask.getDownloadURL().then((downloadURL) => {
+          document.getElementById("image_place").src = downloadURL;
+        });
+      });
+
+      /**背景設定**/
+      //Get elements
+      var uploader1 = document.getElementById("uploader1");
+      const up1 = document.getElementById("up1");
+      //const sendBottom = document.getElementById("sendBottom1");
+
+      //アップロード
+      up1.addEventListener("click", () => {
+        ////アップロードボタンが押されたら、inputタグからファイルの取得
+        const file1 = document.getElementById("fileButton1").files[0];
+        //ファイルの参照(画像保存場所のファイルパスを作る)
+        var storageRef1 = firebase.storage().ref();
+
+        //ファイルのメタデータ
+        var metadata1 = {
+          contentType: "image/*",
+          customMetadata: {
+            "userID": uid
+          }
+        };
+        //画像ファイルのアップロード
+        const uploadTask1 = storageRef1.child(uid + "/" + file1.name).put(file1, metadata1);
+        //console.log(uploadTask1);
+
+        var flg1 = 0;
+        uploadTask1.on(
+          "state_changed",
+          function (snapshot) {
+            var progress1 = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log("Upload is " + progress1 + "% done");
+            uploader1.value = progress1;
+            document.querySelector("#showPercentage1").innerHTML = progress1 + "%";
+            switch (snapshot.state) {
+              case firebase.storage.TaskState.PAUSED: // or 'paused'
+                console.log("Upload is paused");
+                break;
+              case firebase.storage.TaskState.RUNNING: // or 'running'
+                console.log("Upload is running");
+                break;
+            }
+            if (progress1 === 100 && flg1 === 0) {
+              console.log("100%です。");
+              var display = document.querySelector(".disN1");
+              display.classList.replace("disN1", "disB1");
+              flg1 = 1;
+              //progress=0;
+            }
+          },
+          function (error) {
+            switch (error.code) {
+              case "storage/unauthorized":
+                // User doesn't have permission to access the object
+                console.log(
+                  "目的の操作を行う権限がユーザーにありません。セキュリティ ルールが正しいことをご確認ください。"
+                );
+                break;
+
+              case "storage/canceled":
+                // User canceled the upload
+                console.log("ユーザーがオペレーションをキャンセルしました。");
+                break;
+
+              case "storage/unknown":
+                // Unknown error occurred, inspect error.serverResponse
+                console.log("不明なエラーが発生しました。");
+                break;
+              default:
+                console.log("error");
+                break;
+            }
+          }
+        );
+      });
+
+      //ダウンロード
+      const down1 = document.getElementById("down1");
+      down1.addEventListener("click", () => {
+        //ファイルの取得
+        const file1 = document.getElementById("fileButton1").files[0];
+        //ファイルの参照
+        var storageRef1 = firebase.storage().ref();
+        const DownloadTask1 = storageRef1.child(uid + "/background.png");
+        //console.log(file1.name);
+
+        DownloadTask1.getMetadata().then((metadata)=> {
+          //let msg = document.querySelector('#doc1');
+          //msg.textContent = JSON.stringify(metadata, null, "    ");
+          console.log(metadata.customMetadata.userID)
+        });
+
+        //画像ファイルのダウンロード
+        DownloadTask1.getDownloadURL().then((downloadURL) => {
+          document.getElementById("image_place1").src = downloadURL;
+        });
+      });
+
+    </script>
+  </body>
+</html>

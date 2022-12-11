@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>オシゴト-ログイン</title>
+<script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-database.js"></script>
+<link rel="stylesheet" href="index.css"media="all">
+<link href="https://fonts.googleapis.com/css?family=Sawarabi+Mincho" rel="stylesheet">
+<link rel="shortcut icon" href="icon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Klee+One&display=swap" rel="stylesheet">
+
+</head>
+    <img src="title.png"class="title">
+    <h2>オシゴト、始めよう。</h2>
+    <body>
+     <main>
+    <h1 style="color: rgb(255, 255, 255)">君のそばに、<br><span style="color:rgb(255, 255, 255)">オシ</span>がいる。</br></h1>
+    <!--p id="msg">no login...</p-->
+    <div id="form">
+    <p class="form-title">Googleアカウントでログイン</p>
+    <p style = text-align:center>~@gmail.comのメールアドレスで<br>ログインしてください。</p>
+    <button onclick="login();"href="#">ログイン</button>
+
+    <form method = "post">
+        </div>
+    <img src="cover1.jpg" class="cover1">
+    <script>
+
+    var uid = "";
+    var displayName = "";
+    var email = "";
+    var photoURL = "";
+    var emailVerified = "";
+    // Initialize Firebase
+    let config = {
+        apiKey: "AIzaSyDSaaLw5QkkNBQL4Ylt6MQHCev_rVIPdSs",
+        authDomain: "openhacku.firebaseapp.com",
+        databaseURL: "https://openhacku-default-rtdb.firebaseio.com/",
+        projectId: "openhacku",
+        storageBucket: "gs://openhacku.appspot.com/",
+        messagingSenderId: "883797853839"
+    };
+    try {
+        firebase.initializeApp(config);
+    } catch(e) {
+        console.log(e);
+    }
+
+/**
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            console.log('auth user', user);
+            document.querySelector('#msg').textContent = '"' + user.email + '" logined!';
+        }
+    });
+    **/
+
+
+    // login
+    function login(){
+        let provider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth().signInWithPopup(provider).then((result) => {
+            console.log('sign in successfully.');
+            window.location.href = "_index.html";
+        }).catch((error) => {
+            console.log('fail to sign in.');
+            document.querySelector('#msg').textContent = 'fail to login...';
+        });
+    }
+
+
+    // logout
+    function logout(){
+        firebase.auth().signOut().then((res)=>{
+            document.getElementById('msg').textContent = 'no login...';
+        });
+    }
+
+    //ユーザー情報をコンソール上に出力
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+
+        uid = user.uid;
+        displayName = user.displayName;
+        email = user.email;
+        photoURL = user.photoURL;
+        emailVerified = user.emailVerified;
+
+
+        console.log("displayName: " + displayName);//名前
+        console.log("email: " + email);//email
+        console.log("photoURL: " + photoURL);//ユーザー写真のurl
+        console.log("emailVerified " + emailVerified);
+        console.log("uid:" + uid);
+
+
+        // ...
+      } else {
+        // User is signed out
+        console.log("null");
+        // ...
+      }
+
+
+    });
+
+    //データベース関連
+    var database = firebase.database();
+    //カレンダーurlをデータベースに追加
+    function doAction(){
+        let tl = document.querySelector('#calenderUrl');
+        let userID = uid;
+        let val = {
+            'url':tl.value,
+            'userID': userID
+        };
+        var people = database.ref("calendarURL").push();
+        people.set(val);
+        tl.value = '';
+        //window.location.href = "_index.html";
+    }
+    </script>
+    </main>
+</body>
+<footer>
+        <p>ume</p>
+</footer>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>sample</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="jkanban-master/dist/jkanban.min.css">
+
+    <style>
+      /*jKanban*/
+      .task {
+        background-color: #F4CE46;
+      }
+      .progress {
+        background-color: #2A92BF;
+      }
+      .done {
+        background-color: #00B961;
+      }
+
+      /*メニューバー*/
+      ul, li {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .container {
+        height: 100%;
+      }
+
+      .menu {
+        background: #8c618d;
+        color: #fff;
+        position: absolute;
+        height: 100%;
+        width: 45px;
+        white-space: nowrap;
+        overflow: hidden;
+        transition: width 0.1s ease-in;
+        transition-delay: 0.3s;
+      }
+
+      .menu-item .fa {
+        font-size: 19px;
+        width: 45px;
+        text-align: center;
+      }
+
+      .menu-item {
+        line-height: 35px;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+      }
+
+      .menu-item:hover {
+        background: #4d294d;
+      }
+
+      .menu:hover {
+        width: 200px;
+      }
+
+    a {
+        color: #FFFFFF;/*訪問前の色*/
+        text-decoration: none;
+    }
+
+    a:visited{
+        color: #FFFFFF;/*訪問後の色*/
+        text-decoration: none;
+    }
+
+    a:hover {
+        color: #ccccff;/*マウスポインタを置いた時の色*/
+    }
+
+
+    li a{display:block;}
+
+      .tab_container {
+    padding-bottom: 1em;
+    background-color: #fff;
+    border:1px solid #37beb0;
+    margin: 0 auto;}
+  .tab_item {
+    width: calc(100%/2);    /*100%/4を100%/2に変更*/
+    padding:15px 0;
+    border-bottom: 3px solid #37beb0 ;
+    background-color: #ececec;
+    text-align: center;
+    color: #37beb0 ;
+    display: block;
+    float: left;
+    text-align: center;
+    font-weight: bold;
+    transition: all 0.2s ease;
+  }
+  .tab_item:hover {
+    opacity: 0.75;
+  }
+  input[name="tab_item"] {
+    display: none;
+  }
+  .tab_content {
+    display: none;
+    padding: 1em 1em 0;
+    clear: both;
+    overflow: hidden;
+  }
+  #tab1:checked ~ #tab1_content,
+  #tab2:checked ~ #tab2_content {  /*, #tab3:checked ~ #tab3_content , #tab4:checked ~ #tab4_contentを削除*/
+    display: block;
+  }
+  .tab_container input:checked + .tab_item {
+    background-color: #37beb0 ;
+    color: #fff;
+  }
+
+    </style>
+  </head>
+  <body>
+    <!--メニューバー-->
+    <div class="container">
+      <ul class="menu">
+        <li class="menu-item">
+            <i class="fa fa-list-ul" aria-hidden="true"></i>チャンネル一覧
+        </li>
+
+        <li class="menu-item">
+          <a href = "_index.html">
+          <i class="fa fa-comments" aria-hidden="true"></i>個人ページへ
+          </a>
+        </li>
+
+        <li class="menu-item">
+          <a href = "channel1.html">
+            <i class="fa fa-user" aria-hidden="true"></i>チャンネル1
+          </a>
+        </li>
+
+        <li class="menu-item">
+          <a href = "channel2.html">
+            <i class="fa fa-question-circle" aria-hidden="true"></i>チャンネル2
+          </a>
+        </li>
+          <li>
+              <button type = "button" onclick="location.href='channel' + num + '.html', calc(num)">＋</button>
+              チャンネル追加
+            </li>
+      </ul>
+    </div>
+
+    <!--タブ-->
+    <div class="tab_container" style = "margin-left: 50px">
+    <input id="tab1" type="radio" name="tab_item" checked>
+    <label class="tab_item" for="tab1">タブ1</label>
+    <input id="tab2" type="radio" name="tab_item">
+    <label class="tab_item" for="tab2">タブ2</label>
+
+    <div class="tab_content" id="tab1_content">
+          <div id="myKanban1"></div>
+    </div>
+
+    <div class="tab_content" id="tab2_content">
+          <div id="myKanban2"></div>
+    </div>
+  </div>
+
+  <script src="jkanban-master/dist/jkanban.min.js"></script>
+  <script>
+
+      //初期状態のタスク管理ボード用JSONデータ
+      const defaultBoards = [
+        {
+            "id": "sample-board-1",
+            "title": "タスク",
+            "class": "task",
+            "dragTo": ['sample-board-2'],
+            "item": [
+                { "title": "報告書の作成" },
+                { "title": "14時から打ち合わせ" }
+            ]
+        },
+
+        {
+            "id": "sample-board-2",
+            "title": "進行中",
+            "class": "progress",
+            "item": [{ "title": "○○案の企画書作成" }]
+        },
+
+        {
+            "id": "sample-board-3",
+            "title": "完了",
+            "class": "done",
+            "item": [{ "title": "日報の提出" }]
+        }
+      ];
+
+
+
+      //jKanbanのインスタンス作成
+      const kanban1 = new jKanban({
+        element         : '#myKanban1',  //タスク管理ボードを表示するHTML要素
+        gutter          : '15px',       //ボード同士の間隔 15px
+        widthBoard      : '250px',      //ボードのサイズ   250px
+        responsivePercentage: true,
+        boards          : defaultBoards,//初期状態のJSONデータ
+        dragBoards       : false,
+        itemAddOptions: {
+          enabled: true,                                              // add a button to board for easy item creation
+          content: '+',                                                // text or html content of the board button
+          class: 'kanban-title-button btn btn-default btn-xs',         // default class of the button
+          footer: false                                                // position the button on footer
+      　},//タスク追加用のボタンを表示
+
+        click: (elem) => kanban1.removeElement(elem),  //タスクをクリックして削除
+        buttonClick: (elem, id) => addFormElement1(id) //タスク追加用の関数を指定
+      });
+
+      const kanban2 = new jKanban({
+        element         : '#myKanban2',  //タスク管理ボードを表示するHTML要素
+        gutter          : '15px',       //ボード同士の間隔 15px
+        widthBoard      : '250px',      //ボードのサイズ   250px
+        responsivePercentage: true,
+        boards          : defaultBoards,//初期状態のJSONデータ
+        dragBoards       : false,
+        itemAddOptions: {
+          enabled: true,                                              // add a button to board for easy item creation
+          content: '+',                                                // text or html content of the board button
+          class: 'kanban-title-button btn btn-default btn-xs',         // default class of the button
+          footer: false                                                // position the button on footer
+      　},//タスク追加用のボタンを表示
+
+        click: (elem) => kanban2.removeElement(elem),  //タスクをクリックして削除
+        buttonClick: (elem, id) => addFormElement2(id) //タスク追加用の関数を指定
+      });
+
+
+
+
+
+      //タスク追加用の関数
+      function addFormElement1(id) {
+          const formItem = document.createElement('form');
+
+          formItem.innerHTML = '<input type="text">';  //タスクを追加するための入力ボックスを作成
+          kanban1.addForm(id, formItem);  //入力ボックスをボードに追加
+
+          //タスクを登録する時のイベント処理
+          formItem.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            kanban1.addElement(id, {"title": e.target[0].value}); //入力された文字列をタスクとして登録
+            formItem.parentNode.removeChild(formItem); //入力ボックスを非表示にするために削除
+          })
+      }
+
+      function addFormElemen2t(id) {
+          const formItem = document.createElement('form');
+
+          formItem.innerHTML = '<input type="text">';  //タスクを追加するための入力ボックスを作成
+          kanban2.addForm(id, formItem);  //入力ボックスをボードに追加
+
+          //タスクを登録する時のイベント処理
+          formItem.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            kanban2.addElement(id, {"title": e.target[0].value}); //入力された文字列をタスクとして登録
+            formItem.parentNode.removeChild(formItem); //入力ボックスを非表示にするために削除
+          })
+      }
+
+
+  </script>
+
+
+  </body>
+</html>
